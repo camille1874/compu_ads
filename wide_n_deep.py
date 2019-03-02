@@ -11,28 +11,21 @@ import pandas as pd
 from six.moves import urllib
 import tensorflow as tf
 from data_utils import read_data
+from data_utils import read_data_with_sampling
 import codecs
 
 isbuyer = tf.feature_column.numeric_column("isbuyer")
 buy_freq = tf.feature_column.categorical_column_with_hash_bucket("buy_freq", hash_bucket_size=1000, dtype=tf.int64)
-#buy_freq = tf.feature_column.numeric_column("buy_freq")
 visit_freq = tf.feature_column.categorical_column_with_hash_bucket("visit_freq", hash_bucket_size=1000, dtype=tf.int64)
-#visit_freq = tf.feature_column.numeric_column("visit_freq")
 buy_interval = tf.feature_column.numeric_column("buy_interval")
 sv_interval = tf.feature_column.numeric_column("sv_interval")
 expected_time_buy = tf.feature_column.numeric_column("expected_time_buy")
 expected_time_visit = tf.feature_column.numeric_column("expected_time_visit")
-#last_buy = tf.feature_column.numeric_column("last_buy")
 last_buy = tf.feature_column.categorical_column_with_hash_bucket("last_buy", hash_bucket_size=1000, dtype=tf.int64)
 last_visit = tf.feature_column.categorical_column_with_hash_bucket("last_visit", hash_bucket_size=1000, dtype=tf.int64)
-#last_visit = tf.feature_column.numeric_column("last_visit")
-#multiple_buy = tf.feature_column.numeric_column("multiple_buy")
 multiple_buy = tf.feature_column.categorical_column_with_hash_bucket("multiple_buy", hash_bucket_size=1000, dtype=tf.int64)
-#multiple_visit = tf.feature_column.numeric_column("multiple_visit")
 multiple_visit = tf.feature_column.categorical_column_with_hash_bucket("multiple_visit", hash_bucket_size=1000, dtype=tf.int64)
-#uniq_urls = tf.feature_column.numeric_column("uniq_urls")
 uniq_urls = tf.feature_column.categorical_column_with_hash_bucket("uniq_urls", hash_bucket_size=1000, dtype=tf.int64)
-#num_checkins = tf.feature_column.numeric_column("num_checkins")
 num_checkins = tf.feature_column.categorical_column_with_hash_bucket("num_checkins", hash_bucket_size=1000, dtype=tf.int64)
 
 
@@ -94,7 +87,8 @@ def train_and_eval(model_dir, model_type, train_steps, train_file_name, valid_fi
     session_config = tf.ConfigProto(allow_soft_placement=True)
     session_config.gpu_options.allow_growth=True
     with tf.Session(config=session_config) as sess:
-        m.train(input_fn=read_data(train_file_name, num_epochs=None, shuffle=True), steps=train_steps)
+        #m.train(input_fn=read_data(train_file_name, num_epochs=None, shuffle=True), steps=train_steps)
+        m.train(input_fn=read_data_with_sampling(train_file_name, num_epochs=None, shuffle=True), steps=train_steps)
         eval_result = m.evaluate(input_fn=read_data(valid_file_name, num_epochs=1, shuffle=False), steps=None)
         print("model directory = %s" % model_dir)
         for key in sorted(eval_result):
@@ -158,7 +152,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--result_file",
       type=str,
-      default="./result.csv",
+      default="./result_5000.csv",
       help="Path to the result data."
   )
   FLAGS, unparsed = parser.parse_known_args()
