@@ -15,18 +15,18 @@ from data_utils import read_data_with_sampling
 import codecs
 
 isbuyer = tf.feature_column.numeric_column("isbuyer")
-buy_freq = tf.feature_column.categorical_column_with_hash_bucket("buy_freq", hash_bucket_size=1000, dtype=tf.int64)
-visit_freq = tf.feature_column.categorical_column_with_hash_bucket("visit_freq", hash_bucket_size=1000, dtype=tf.int64)
+buy_freq = tf.feature_column.categorical_column_with_hash_bucket("buy_freq", hash_bucket_size=16, dtype=tf.int64)
+visit_freq = tf.feature_column.categorical_column_with_hash_bucket("visit_freq", hash_bucket_size=100, dtype=tf.int64)
 buy_interval = tf.feature_column.numeric_column("buy_interval")
 sv_interval = tf.feature_column.numeric_column("sv_interval")
 expected_time_buy = tf.feature_column.numeric_column("expected_time_buy")
 expected_time_visit = tf.feature_column.numeric_column("expected_time_visit")
-last_buy = tf.feature_column.categorical_column_with_hash_bucket("last_buy", hash_bucket_size=1000, dtype=tf.int64)
-last_visit = tf.feature_column.categorical_column_with_hash_bucket("last_visit", hash_bucket_size=1000, dtype=tf.int64)
+last_buy = tf.feature_column.categorical_column_with_hash_bucket("last_buy", hash_bucket_size=200, dtype=tf.int64)
+last_visit = tf.feature_column.categorical_column_with_hash_bucket("last_visit", hash_bucket_size=200, dtype=tf.int64)
 multiple_buy = tf.feature_column.numeric_column("multiple_buy")
 multiple_visit = tf.feature_column.numeric_column("multiple_visit")
-uniq_urls = tf.feature_column.categorical_column_with_hash_bucket("uniq_urls", hash_bucket_size=1000, dtype=tf.int64)
-num_checkins = tf.feature_column.categorical_column_with_hash_bucket("num_checkins", hash_bucket_size=1000, dtype=tf.int64)
+uniq_urls = tf.feature_column.categorical_column_with_hash_bucket("uniq_urls", hash_bucket_size=256, dtype=tf.int64)
+num_checkins = tf.feature_column.categorical_column_with_hash_bucket("num_checkins", hash_bucket_size=37200, dtype=tf.int64)
 
 
 # Wide columns and deep columns.
