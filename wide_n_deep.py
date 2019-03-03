@@ -102,55 +102,53 @@ FLAGS = None
 
 
 def main(_):
-  train_and_eval(FLAGS.model_dir, FLAGS.model_type, FLAGS.train_steps,
-                 FLAGS.train_data, FLAGS.valid_data, FLAGS.test_data, FLAGS.result_file)
-
-
+    train_and_eval(FLAGS.model_dir + "_" + FLAGS.model_type, FLAGS.model_type, FLAGS.train_steps, FLAGS.train_data, FLAGS.valid_data, FLAGS.test_data, FLAGS.model_type + "_" + FLAGS.result_file)
+  
 if __name__ == "__main__":
-  parser = argparse.ArgumentParser()
-  parser.register("type", "bool", lambda v: v.lower() == "true")
-  parser.add_argument(
-      "--model_dir",
-      type=str,
-      default="./model/model_10000",
-      help="Base directory for output models."
-  )
-  parser.add_argument(
-      "--model_type",
-      type=str,
-      default="wide_n_deep",
-      help="Valid model types: {'wide', 'deep', 'wide_n_deep'}."
-  )
-  parser.add_argument(
-      "--train_steps",
-      type=int,
-      default=10000,
-      help="Number of training steps."
-  )
-  parser.add_argument(
-      "--train_data",
-      type=str,
-      default="./data/train.csv",
-      help="Path to the training data."
-  )
-  parser.add_argument(
-      "--valid_data",
-      type=str,
-      default="./data/valid.csv",
-      help="Path to the valid data."
-  )
-  parser.add_argument(
-      "--test_data",
-      type=str,
-      default="./data/ads_test.csv",
-      #default="./data/valid.csv",
-      help="Path to the test data."
-  )
-  parser.add_argument(
-      "--result_file",
-      type=str,
-      default="./result_10000.csv",
-      help="Path to the result data."
-  )
-  FLAGS, unparsed = parser.parse_known_args()
-  tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
+    parser = argparse.ArgumentParser() 
+    parser.register("type", "bool", lambda v: v.lower() == "true")
+    parser.add_argument(
+        "--model_dir",
+        type=str,
+        default="./model/model",
+        help="Base directory for output models."
+    )
+    parser.add_argument(
+        "--model_type",
+        type=str,
+        default="wide_n_deep",
+        help="Valid model types: {'wide', 'deep', 'wide_n_deep'}."
+    )
+    parser.add_argument(
+        "--train_steps",
+        type=int,
+        default=5000,
+        help="Number of training steps."
+    )
+    parser.add_argument(
+        "--train_data",
+        type=str,
+        default="./data/train.csv",
+        help="Path to the training data."
+    )
+    parser.add_argument(
+        "--valid_data",
+        type=str,
+        default="./data/valid.csv",
+        help="Path to the valid data."
+    )
+    parser.add_argument(
+        "--test_data",
+        type=str,
+        default="./data/ads_test.csv",
+        #default="./data/valid.csv",
+        help="Path to the test data."
+    )
+    parser.add_argument(
+        "--result_file",
+        type=str,
+        default="result.csv",
+        help="Path to the result data."
+    )
+    FLAGS, unparsed = parser.parse_known_args()
+    tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
