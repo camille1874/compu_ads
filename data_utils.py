@@ -3,6 +3,7 @@ import pandas as pd
 from collections import Counter
 from imblearn.combine import SMOTEENN
 from imblearn.combine import SMOTETomek
+from imblearn.under_sampling import NearMiss
 import numpy as np
 
 
@@ -31,7 +32,7 @@ def read_data(data_file, num_epochs, shuffle):
         num_threads=1)
     return inputs
 
-# 过采样和欠采样结合
+# 采样
 def read_data_with_sampling(data_file, num_epochs, shuffle):
     df_data = pd.read_csv(
     tf.gfile.Open(data_file),
@@ -44,12 +45,18 @@ def read_data_with_sampling(data_file, num_epochs, shuffle):
     X_column = X.columns
     y_column = ["y_buy"]
     print(sorted(Counter(y).items()))
+    # 直接欠采样
+    # nm = NearMiss(random_state=0, version=3)
+    # X_resampled, y_resampled = nm.fit_sample(X, y)
+    # print(sorted(Counter(y_resampled).items()))
+    # 欠采样和过采样结合1
     smote_enn = SMOTEENN(sampling_strategy=0.5, random_state=0)
     X_resampled, y_resampled = smote_enn.fit_sample(X, y)
     print(sorted(Counter(y_resampled).items()))
-    #smote_tomek = SMOTETomek(sampling_strategy=0.1, random_state=0) 
-    #X_resampled, y_resampled = smote_tomek.fit_resample(X, y)
-    #print(sorted(Counter(y_resampled).items()))
+    ## 欠采样和过采样结合2
+    ##smote_tomek = SMOTETomek(sampling_strategy=0.1, random_state=0) 
+    ##X_resampled, y_resampled = smote_tomek.fit_resample(X, y)
+    ##print(sorted(Counter(y_resampled).items()))
     X_resampled = pd.DataFrame(X_resampled, columns=X_column) 
     y_resampled = pd.DataFrame(y_resampled, columns=y_column) 
     process(X_resampled)

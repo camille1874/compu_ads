@@ -8,9 +8,9 @@ df = pd.read_csv("./data/ads_train.csv", encoding="utf-8", header=0)
 df.info()
 df.describe()
 df.duplicated(keep="last")
-plt.figure()
-df.plot.hist(grid=False, figsize=(12, 12))
-plt.savefig('histogram.png')
+#plt.figure()
+#df.plot.hist(grid=False, figsize=(12, 12))
+#plt.savefig('histogram.png')
 
 print(df["y_buy"].value_counts())
 
