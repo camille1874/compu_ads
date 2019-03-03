@@ -23,14 +23,14 @@ expected_time_buy = tf.feature_column.numeric_column("expected_time_buy")
 expected_time_visit = tf.feature_column.numeric_column("expected_time_visit")
 last_buy = tf.feature_column.categorical_column_with_hash_bucket("last_buy", hash_bucket_size=1000, dtype=tf.int64)
 last_visit = tf.feature_column.categorical_column_with_hash_bucket("last_visit", hash_bucket_size=1000, dtype=tf.int64)
-multiple_buy = tf.feature_column.categorical_column_with_hash_bucket("multiple_buy", hash_bucket_size=1000, dtype=tf.int64)
-multiple_visit = tf.feature_column.categorical_column_with_hash_bucket("multiple_visit", hash_bucket_size=1000, dtype=tf.int64)
+multiple_buy = tf.feature_column.numeric_column("multiple_buy")
+multiple_visit = tf.feature_column.numeric_column("multiple_visit")
 uniq_urls = tf.feature_column.categorical_column_with_hash_bucket("uniq_urls", hash_bucket_size=1000, dtype=tf.int64)
 num_checkins = tf.feature_column.categorical_column_with_hash_bucket("num_checkins", hash_bucket_size=1000, dtype=tf.int64)
 
 
 # Wide columns and deep columns.
-base_columns = [isbuyer, buy_freq, visit_freq, buy_interval, sv_interval, expected_time_buy, expected_time_visit, last_buy, last_visit, multiple_buy, multiple_visit, uniq_urls, num_checkins]
+base_columns = [isbuyer, buy_freq, visit_freq, last_buy, last_visit, multiple_buy, multiple_visit, uniq_urls, num_checkins]
 
 crossed_columns = [
     tf.feature_column.crossed_column(["isbuyer", "buy_freq"], hash_bucket_size=1000),
@@ -38,7 +38,6 @@ crossed_columns = [
     tf.feature_column.crossed_column(["buy_interval", "sv_interval"], hash_bucket_size=1000),
     tf.feature_column.crossed_column(["expected_time_buy", "expected_time_visit"], hash_bucket_size=1000),
     tf.feature_column.crossed_column(["last_buy", "last_visit"], hash_bucket_size=1000),
-    tf.feature_column.crossed_column(["multiple_buy", "multiple_visit"], hash_bucket_size=1000),
     tf.feature_column.crossed_column(["uniq_urls", "num_checkins"], hash_bucket_size=1000),
     tf.feature_column.crossed_column(["visit_freq", "last_visit", ], hash_bucket_size=1000),
     tf.feature_column.crossed_column(["buy_freq", "last_buy", ], hash_bucket_size=1000),
@@ -47,15 +46,13 @@ crossed_columns = [
 ]
 
 deep_columns = [isbuyer, 
-tf.feature_column.embedding_column(buy_freq, dimension=8),
+tf.feature_column.embedding_column(buy_freq, dimension=4),
 tf.feature_column.embedding_column(visit_freq, dimension=8),
  buy_interval, sv_interval, expected_time_buy, expected_time_visit, 
 tf.feature_column.embedding_column(last_buy, dimension=8),
 tf.feature_column.embedding_column(last_visit, dimension=8),
-tf.feature_column.embedding_column(multiple_buy, dimension=8),
-tf.feature_column.embedding_column(multiple_visit, dimension=8),
 tf.feature_column.embedding_column(uniq_urls, dimension=8),
-tf.feature_column.embedding_column(num_checkins, dimension=8)]
+tf.feature_column.embedding_column(num_checkins, dimension=16)]
 
 
 def build_model(model_dir, model_type):
@@ -70,7 +67,7 @@ def build_model(model_dir, model_type):
     else:
         m = tf.estimator.DNNLinearCombinedClassifier(
         model_dir=model_dir,
-        linear_feature_columns=crossed_columns,
+        linear_feature_columns=base_columns + crossed_columns,
         dnn_feature_columns=deep_columns,
         dnn_hidden_units=[100, 50])
     return m
@@ -115,7 +112,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--model_dir",
       type=str,
-      default="./model/model_5000",
+      default="./model/model_10000",
       help="Base directory for output models."
   )
   parser.add_argument(
@@ -127,7 +124,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--train_steps",
       type=int,
-      default=5000,
+      default=10000,
       help="Number of training steps."
   )
   parser.add_argument(
@@ -152,7 +149,7 @@ if __name__ == "__main__":
   parser.add_argument(
       "--result_file",
       type=str,
-      default="./result_5000.csv",
+      default="./result_10000.csv",
       help="Path to the result data."
   )
   FLAGS, unparsed = parser.parse_known_args()
